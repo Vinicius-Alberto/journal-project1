@@ -1,0 +1,236 @@
+/* Formulário do Editor */
+.editor-form {
+    background-color: var(--white);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+}
+
+.editor-form label {
+    display: block;
+    font-weight: bold;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.editor-form input,
+.editor-form textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    margin-bottom: var(--margin);
+    font-size: 1rem;
+}
+
+.editor-form textarea {
+    height: 150px;
+    resize: vertical;
+}
+
+.editor-form button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.editor-form button:first-of-type {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.editor-form button:first-of-type:hover {
+    background-color: #00266b;
+}
+
+.editor-form button:last-of-type {
+    background-color: var(--gray);
+    color: var(--white);
+    margin-left: 0.5rem;
+}
+
+.editor-form button:last-of-type:hover {
+    background-color: #555555;
+}
+
+/* Lista de Notícias */
+.news-list {
+    margin-top: var(--margin);
+}
+
+.news-item {
+    background-color: var(--white);
+    padding: var(--padding);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin-bottom: var(--margin);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.2s ease;
+}
+
+.news-item:hover {
+    transform: translateY(-2px);
+}
+
+.news-item h4 {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin-bottom: 0.25rem;
+}
+
+.news-item p {
+    color: var(--gray);
+    font-size: 0.9rem;
+}
+
+.news-item img {
+    max-width: 50px;
+    margin-left: var(--margin);
+    border-radius: 4px;
+}
+
+.news-item button {
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 0.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.news-item button.edit {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.news-item button.edit:hover {
+    background-color: #00266b;
+}
+
+.news-item button.delete {
+    background-color: var(--secondary-color);
+    color: var(--white);
+}
+
+.news-item button.delete:hover {
+    background-color: #aa0000;
+}
+
+/* Modal de Edição */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: var(--white);
+    width: 90%;
+    max-width: 500px;
+    margin: 10% auto;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    color: var(--text-color);
+    font-family: var(--font-title);
+}
+
+.modal-content label {
+    display: block;
+    font-weight: bold;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.modal-content input,
+.modal-content textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    margin-bottom: var(--margin);
+    font-size: 1rem;
+}
+
+.modal-content textarea {
+    height: 150px;
+    resize: vertical;
+}
+
+.modal-content button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.modal-content button:first-of-type {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.modal-content button:first-of-type:hover {
+    background-color: #00266b;
+}
+
+.modal-content button:last-of-type {
+    background-color: var(--gray);
+    color: var(--white);
+    margin-left: 0.5rem;
+}
+
+.modal-content button:last-of-type:hover {
+    background-color: #555555;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .news-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .news-item img {
+        margin: 0.5rem 0;
+    }
+
+    .news-item button {
+        margin: 0.5rem 0 0;
+    }
+
+    .editor-form {
+        padding: var(--padding);
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 20% auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .editor-form input,
+    .editor-form textarea,
+    .modal-content input,
+    .modal-content textarea {
+        font-size: 0.9rem;
+    }
+}

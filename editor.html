@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor de Notícias</title>
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="editor.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Portal de Notícias</h1>
+            <nav>
+                <a href="index.html">Notícias</a>
+                <a href="editor.html">Editor</a>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <h2>Editor de Notícias</h2>
+        <div class="editor-form">
+            <label for="newsTitle">Título</label>
+            <input type="text" id="newsTitle" placeholder="Digite o título da notícia">
+            <label for="newsContent">Conteúdo</label>
+            <textarea id="newsContent" placeholder="Digite o conteúdo da notícia"></textarea>
+            <label for="newsImage">Imagem do Jornal</label>
+            <input type="file" id="newsImage" accept="image/*">
+            <button onclick="saveNews()">Salvar Notícia</button>
+            <button onclick="clearForm()">Limpar</button>
+        </div>
+        <h2>Notícias Existentes</h2>
+        <div id="editorNewsList" class="news-list">
+        </div>
+    </div>
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h3>Editar Notícia</h3>
+            <label for="editTitle">Título</label>
+            <input type="text" id="editTitle">
+            <label for="editContent">Conteúdo</label>
+            <textarea id="editContent"></textarea>
+            <label for="editImage">Imagem do Jornal</label>
+            <input type="file" id="editImage" accept="image/*">
+            <button onclick="saveEditedNews()">Salvar</button>
+            <button onclick="closeEditModal()">Cancelar</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
