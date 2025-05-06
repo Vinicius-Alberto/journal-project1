@@ -1,0 +1,69 @@
+/* Estilos Específicos da Página Principal */
+.filter-container {
+    margin-bottom: var(--margin);
+}
+
+.filter-container label {
+    margin-right: 0.5rem;
+}
+
+#viewsChart {
+    max-width: 100%;
+    height: 300px;
+    margin-bottom: var(--margin);
+}
+
+.news-item {
+    background-color: var(--white);
+    padding: var(--padding);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin-bottom: var(--margin);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.2s ease;
+}
+
+.news-item:hover {
+    transform: translateY(-2px);
+}
+
+.news-item h4 {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin-bottom: 0.25rem;
+}
+
+.news-item p {
+    color: var(--gray);
+    font-size: 0.9rem;
+}
+
+.news-item img {
+    max-width: 50px;
+    margin-left: var(--margin);
+    border-radius: 4px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .news-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .news-item img {
+        margin: 0.5rem 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .news-item h4 {
+        font-size: 1rem;
+    }
+
+    .news-item p {
+        font-size: 0.8rem;
+    }
+}

@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editor de Notícias</title>
-    <link rel="stylesheet" href="common.css">
-    <link rel="stylesheet" href="editor.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/editor.css">
 </head>
 <body>
     <header>
@@ -13,7 +13,7 @@
             <h1>Portal de Notícias</h1>
             <nav>
                 <a href="index.html">Notícias</a>
-                <a href="editor.html">Editor</a>
+                <a href="editor.html" class="active">Editor</a>
             </nav>
         </div>
     </header>
@@ -26,12 +26,11 @@
             <textarea id="newsContent" placeholder="Digite o conteúdo da notícia"></textarea>
             <label for="newsImage">Imagem do Jornal</label>
             <input type="file" id="newsImage" accept="image/*">
-            <button onclick="saveNews()">Salvar Notícia</button>
-            <button onclick="clearForm()">Limpar</button>
+            <button>Salvar Notícia</button>
+            <button>Limpar</button>
         </div>
         <h2>Notícias Existentes</h2>
-        <div id="editorNewsList" class="news-list">
-        </div>
+        <div id="editorNewsList" class="news-list"></div>
     </div>
     <div id="editModal" class="modal">
         <div class="modal-content">
@@ -42,10 +41,10 @@
             <textarea id="editContent"></textarea>
             <label for="editImage">Imagem do Jornal</label>
             <input type="file" id="editImage" accept="image/*">
-            <button onclick="saveEditedNews()">Salvar</button>
-            <button onclick="closeEditModal()">Cancelar</button>
+            <button>Salvar</button>
+            <button>Cancelar</button>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
