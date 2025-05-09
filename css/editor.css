@@ -1,4 +1,3 @@
-/* Formulário do Editor */
 .editor-form {
     background-color: var(--white);
     padding: 1.5rem;
@@ -9,19 +8,20 @@
 
 .editor-form label {
     display: block;
-    font-weight: bold;
-    color: var(--text-color);
+    font-weight: 500;
     margin-bottom: 0.5rem;
+    color: var(--text-color);
 }
 
 .editor-form input,
 .editor-form textarea {
     width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #cccccc;
-    border-radius: 4px;
-    margin-bottom: var(--margin);
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--gray);
+    border-radius: var(--border-radius);
     font-size: 1rem;
+    box-sizing: border-box;
 }
 
 .editor-form textarea {
@@ -29,143 +29,158 @@
     resize: vertical;
 }
 
-.editor-form button {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
+.editor-form input[type="file"] {
+    padding: 0.5rem 0;
 }
 
-.editor-form button:first-of-type {
+.editor-form button {
     background-color: var(--primary-color);
     color: var(--white);
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 1rem;
+    margin-right: 0.5rem;
+    transition: background-color 0.2s ease;
 }
 
-.editor-form button:first-of-type:hover {
-    background-color: #00266b;
-}
-
-.editor-form button:last-of-type {
+.editor-form button:last-child {
     background-color: var(--gray);
-    color: var(--white);
-    margin-left: 0.5rem;
 }
 
-.editor-form button:last-of-type:hover {
-    background-color: #555555;
+.editor-form button:hover {
+    background-color: var(--primary-dark);
 }
 
-/* Lista de Notícias */
+.editor-form button:last-child:hover {
+    background-color: var(--gray-dark);
+}
+
 .news-list {
-    margin-top: var(--margin);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .news-item {
     background-color: var(--white);
-    padding: var(--padding);
+    padding: 1.5rem;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
-    margin-bottom: var(--margin);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: transform 0.2s ease;
+    gap: 1rem;
 }
 
-.news-item:hover {
-    transform: translateY(-2px);
+.news-item > div {
+    flex: 1;
 }
 
 .news-item h4 {
-    font-size: 1.1rem;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
     color: var(--text-color);
-    margin-bottom: 0.25rem;
 }
 
 .news-item p {
-    color: var(--gray);
-    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
 }
 
-.news-item img {
-    max-width: 50px;
-    margin-left: var(--margin);
-    border-radius: 4px;
+.news-item img.news-image {
+    max-width: 150px;
+    max-height: 150px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+    display: block; /* Garante que a imagem não seja escondida */
 }
 
-.news-item button {
-    padding: 0.4rem 0.8rem;
+.news-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.news-actions button {
+    padding: 0.5rem 1rem;
     border: none;
-    border-radius: 4px;
+    border-radius: var(--border-radius);
     cursor: pointer;
     font-size: 0.9rem;
-    margin-left: 0.5rem;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.2s ease;
 }
 
-.news-item button.edit {
+.edit-btn {
     background-color: var(--primary-color);
     color: var(--white);
 }
 
-.news-item button.edit:hover {
-    background-color: #00266b;
+.edit-btn:hover {
+    background-color: var(--primary-dark);
 }
 
-.news-item button.delete {
-    background-color: var(--secondary-color);
+.delete-btn {
+    background-color: var(--danger-color);
     color: var(--white);
 }
 
-.news-item button.delete:hover {
-    background-color: #aa0000;
+.delete-btn:hover {
+    background-color: var(--danger-dark);
 }
 
-/* Modal de Edição */
 .modal {
     display: none;
     position: fixed;
-    top: 0;
+    z-index: 1;
     left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    overflow: auto;
 }
 
 .modal-content {
     background-color: var(--white);
-    width: 90%;
-    max-width: 500px;
-    margin: 10% auto;
-    padding: 1.5rem;
+    margin: 5% auto;
+    padding: 2rem;
     border-radius: var(--border-radius);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow);
+    width: 90%;
+    max-width: 600px;
+    position: relative;
 }
 
-.modal-content h3 {
-    margin-top: 0;
+.close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    color: var(--gray);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.close:hover {
     color: var(--text-color);
-    font-family: var(--font-title);
 }
 
 .modal-content label {
     display: block;
-    font-weight: bold;
-    color: var(--text-color);
+    font-weight: 500;
     margin-bottom: 0.5rem;
+    color: var(--text-color);
 }
 
 .modal-content input,
 .modal-content textarea {
     width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #cccccc;
-    border-radius: 4px;
-    margin-bottom: var(--margin);
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--gray);
+    border-radius: var(--border-radius);
     font-size: 1rem;
+    box-sizing: border-box;
 }
 
 .modal-content textarea {
@@ -174,31 +189,27 @@
 }
 
 .modal-content button {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
-}
-
-.modal-content button:first-of-type {
     background-color: var(--primary-color);
     color: var(--white);
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 1rem;
+    margin-right: 0.5rem;
+    transition: background-color 0.2s ease;
 }
 
-.modal-content button:first-of-type:hover {
-    background-color: #00266b;
-}
-
-.modal-content button:last-of-type {
+.modal-content button:last-child {
     background-color: var(--gray);
-    color: var(--white);
-    margin-left: 0.5rem;
 }
 
-.modal-content button:last-of-type:hover {
-    background-color: #555555;
+.modal-content button:hover {
+    background-color: var(--primary-dark);
+}
+
+.modal-content button:last-child:hover {
+    background-color: var(--gray-dark);
 }
 
 /* Responsividade */
@@ -208,29 +219,33 @@
         align-items: flex-start;
     }
 
-    .news-item img {
-        margin: 0.5rem 0;
+    .news-item img.news-image {
+        max-width: 100%;
+        max-height: 120px;
     }
 
-    .news-item button {
-        margin: 0.5rem 0 0;
-    }
-
-    .editor-form {
-        padding: var(--padding);
-    }
-
-    .modal-content {
-        width: 95%;
-        margin: 20% auto;
+    .news-actions {
+        margin-top: 1rem;
+        width: 100%;
+        justify-content: flex-end;
     }
 }
 
 @media (max-width: 480px) {
-    .editor-form input,
-    .editor-form textarea,
-    .modal-content input,
-    .modal-content textarea {
+    .editor-form,
+    .modal-content {
+        padding: 1rem;
+    }
+
+    .news-item img.news-image {
+        max-height: 100px;
+    }
+
+    .news-item h4 {
+        font-size: 1rem;
+    }
+
+    .news-item p {
         font-size: 0.9rem;
     }
 }

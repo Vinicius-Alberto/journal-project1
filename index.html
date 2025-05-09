@@ -4,31 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arquivo de Notícias</title>
-    <link rel="stylesheet" href="css/index.css">
     <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
     <header>
         <div class="container">
             <h1>O Diário</h1>
             <nav>
-                <a href="index.html">Notícias</a>
+                <a href="index.html" class="active">Notícias</a>
                 <a href="editor.html">Editor</a>
             </nav>
         </div>
     </header>
     <div class="container">
-        <h2>Arquivo de Notícias</h2>
-        <div class="filter">
-            <label for="dateFilter">Filtrar por data:</label>
-            <select id="dateFilter" onchange="filterNewsByDate()">
-                <option value="">Todas as datas</option>
-            </select>
-        </div>
-        <canvas id="newspaperCanvas" width="800" height="600"></canvas>
-        <div id="newsList" class="news-list">
+        <h2>Notícias</h2>
+        <div id="newsList" class="news-shelf"></div>
+    </div>
+    <div id="newsModal" class="modal">
+        <div class="modal-content">
+            <span id="closeModal" class="close">&times;</span>
+            <h3 id="modalTitle"></h3>
+            <p id="modalDate"></p>
+            <img id="modalImage" src="" alt="Imagem da notícia" style="display: none; max-width: 100%;">
+            <p id="modalContent"></p>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>

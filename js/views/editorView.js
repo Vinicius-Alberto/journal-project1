@@ -4,151 +4,123 @@ class EditorView {
         this.newsTitle = document.getElementById('newsTitle');
         this.newsContent = document.getElementById('newsContent');
         this.newsImage = document.getElementById('newsImage');
+        this.saveButton = document.querySelector('.save-news-btn');
+        this.clearButton = document.querySelector('.clear-form-btn');
         this.editModal = document.getElementById('editModal');
         this.editTitle = document.getElementById('editTitle');
         this.editContent = document.getElementById('editContent');
         this.editImage = document.getElementById('editImage');
+        this.saveEditButton = document.querySelector('.save-edit-btn');
+        this.cancelEditButton = document.querySelector('.cancel-edit-btn');
+
+        // Log para depuração
+        console.log('Botão Salvar Notícia:', this.saveButton);
+        console.log('Botão Limpar:', this.clearButton);
+        console.log('Botão Salvar Edição:', this.saveEditButton);
+        console.log('Botão Cancelar Edição:', this.cancelEditButton);
     }
 
-    // Renderiza a lista de notícias no editor
     renderNews(news, onEditHandler, onDeleteHandler) {
+        if (!this.newsList) {
+            console.error('Elemento #editorNewsList não encontrado no DOM');
+            return;
+        }
         this.newsList.innerHTML = '';
         news.forEach((item, index) => {
+            console.log('Renderizando notícia - Imagem:', item.image ? item.image.substring(0, 50) + '...' : 'Nenhuma imagem');
             const newsItem = document.createElement('div');
             newsItem.classList.add('news-item');
             newsItem.innerHTML = `
                 <div>
                     <h4>${item.title}</h4>
                     <p>${item.content}</p>
-                    <p>Data: ${new Date(item.date).toLocaleDateString('pt-BR')} | Visualizações: ${item.views || 0}</p>
+                    <p>Data: ${new Date(item.date).toLocaleDateString('pt-BR')}</p>
                 </div>
-                ${item.image ? `<img src="${item.image}" alt="Imagem da notícia">` : ''}
-                <div>
-                    <button class="edit" data-index="${index}">Editar</button>
-                    <button class="delete" data-index="${index}">Excluir</button>
+                ${item.image ? `<img src="${item.image}" alt="Imagem da notícia" class="news-image">` : ''}
+                <div class="news-actions">
+                    <button class="edit-btn">Editar</button>
+                    <button class="delete-btn">Excluir</button>
                 </div>
             `;
+            newsItem.querySelector('.edit-btn').addEventListener('click', () => onEditHandler(index));
+            newsItem.querySelector('.delete-btn').addEventListener('click', () => onDeleteHandler(index));
             this.newsList.appendChild(newsItem);
         });
-
-        // Adiciona eventos aos botões
-        this.newsList.querySelectorAll('.edit').forEach(button => {
-            button.addEventListener('click', () => {
-                const index = button.getAttribute('data-index');
-                onEditHandler(index);
-            });
-        });
-
-        this.newsList.querySelectorAll('.delete').forEach(button => {
-            button.addEventListener('click', () => {
-                const index = button.getAttribute('data-index');
-                onDeleteHandler(index);
-            });
-        });
     }
 
-    // Obtém os dados do formulário
-    getFormData() {
-        const imageFile = this.newsImage.files[0];
-        let imageData = null;
-        if (imageFile) {
-            const reader = new FileReader();
-            reader.readAsDataURL(imageFile);
-            return new Promise(resolve => {
-                reader.onload = () => {
-                    imageData = reader.result;
-                    resolve({
-                        title: this.newsTitle.value,
-                        content: this.newsContent.value,
-                        image: imageData,
-                        date: new Date().toISOString(),
-                        views: 0
-                    });
-                };
-            });
-        }
-        return Promise.resolve({
-            title: this.newsTitle.value,
-            content: this.newsContent.value,
-            image: null,
-            date: new Date().toISOString(),
-            views: 0
-        });
-    }
-
-    // Limpa o formulário
     clearForm() {
-        this.newsTitle.value = '';
-        this.newsContent.value = '';
-        this.newsImage.value = '';
+        if (this.newsTitle) this.newsTitle.value = '';
+        if (this.newsContent) this.newsContent.value = '';
+        if (this.newsImage) this.newsImage.value = '';
     }
 
-    // Abre o modal de edição
-    openEditModal(newsItem) {
-        this.editTitle.value = newsItem.title;
-        this.editContent.value = newsItem.content;
-        this.editImage.value = ''; // Não podemos pré-preencher input de arquivo
+    showEditModal(news) {
+        if (!this.editModal) {
+            console.error('Elemento #editModal não encontrado no DOM');
+            return;
+        }
+        if (this.editTitle) this.editTitle.value = news.title;
+        if (this.editContent) this.editContent.value = news.content;
+        if (this.editImage) this.editImage.value = '';
         this.editModal.style.display = 'block';
     }
 
-    // Fecha o modal de edição
     closeEditModal() {
-        this.editModal.style.display = 'none';
+        if (this.editModal) this.editModal.style.display = 'none';
     }
 
-    // Obtém os dados do modal de edição
-    getEditFormData() {
-        const imageFile = this.editImage.files[0];
-        let imageData = null;
-        if (imageFile) {
-            const reader = new FileReader();
-            reader.readAsDataURL(imageFile);
-            return new Promise(resolve => {
-                reader.onload = () => {
-                    imageData = reader.result;
-                    resolve({
-                        title: this.editTitle.value,
-                        content: this.editContent.value,
-                        image: imageData,
-                        date: new Date().toISOString(),
-                        views: 0
-                    });
-                };
-            });
-        }
-        return Promise.resolve({
-            title: this.editTitle.value,
-            content: this.editContent.value,
-            image: null,
-            date: new Date().toISOString(),
-            views: 0
-        });
-    }
-
-    // Adiciona eventos aos botões do formulário e modal
     bindSaveNews(handler) {
-        document.querySelector('.editor-form button:first-of-type').addEventListener('click', async () => {
-            const newsData = await this.getFormData();
-            handler(newsData);
+        if (!this.saveButton) {
+            console.error('Botão de salvar notícia não encontrado');
+            return;
+        }
+        this.saveButton.addEventListener('click', () => {
+            const title = this.newsTitle ? this.newsTitle.value.trim() : '';
+            const content = this.newsContent ? this.newsContent.value.trim() : '';
+            const imageFile = this.newsImage && this.newsImage.files.length > 0 ? this.newsImage.files[0] : null;
+            console.log('Salvando notícia - Imagem:', imageFile);
+            if (title && content) {
+                handler(title, content, imageFile);
+            } else {
+                alert('Por favor, preencha o título e o conteúdo.');
+            }
         });
     }
 
     bindClearForm(handler) {
-        document.querySelector('.editor-form button:last-of-type').addEventListener('click', () => {
+        if (!this.clearButton) {
+            console.error('Botão de limpar não encontrado');
+            return;
+        }
+        this.clearButton.addEventListener('click', () => {
             handler();
         });
     }
 
-    bindSaveEditedNews(handler, index) {
-        const saveButton = document.querySelector('#editModal button:first-of-type');
-        saveButton.onclick = async () => {
-            const updatedNews = await this.getEditFormData();
-            handler(index, updatedNews);
-        };
+    bindSaveEditedNews(handler) {
+        if (!this.saveEditButton) {
+            console.error('Botão de salvar edição não encontrado');
+            return;
+        }
+        this.saveEditButton.addEventListener('click', () => {
+            const title = this.editTitle ? this.editTitle.value.trim() : '';
+            const content = this.editContent ? this.editContent.value.trim() : '';
+            const imageFile = this.editImage && this.editImage.files.length > 0 ? this.editImage.files[0] : null;
+            console.log('Salvando edição - Imagem:', imageFile);
+            if (title && content) {
+                handler(title, content, imageFile);
+            } else {
+                alert('Por favor, preencha o título e o conteúdo.');
+            }
+        });
     }
 
     bindCloseEditModal(handler) {
-        document.querySelector('#editModal button:last-of-type').addEventListener('click', () => {
+        if (!this.cancelEditButton) {
+            console.error('Botão de cancelar edição não encontrado');
+            return;
+        }
+        this.cancelEditButton.addEventListener('click', () => {
             handler();
         });
     }

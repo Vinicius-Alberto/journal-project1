@@ -1,30 +1,30 @@
-(async () => {
-    // Carrega Chart.js dinamicamente
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js'; // Versão específica para evitar warnings
-    script.onload = () => console.log('Chart.js carregado com sucesso!');
-    document.head.appendChild(script);
-
-    // Aguarda um curto período para garantir que o Chart.js esteja carregado
+document.addEventListener('DOMContentLoaded', async () => {
+    // Pequeno atraso para garantir que o DOM esteja completamente carregado
     await new Promise(resolve => setTimeout(resolve, 100));
 
     // Importa módulos dinamicamente
     const { default: NewsModel } = await import('./models/newsModel.js');
     const model = new NewsModel();
+    console.log('NewsModel instanciado:', model); // Log para depuração
 
     const currentPage = window.location.pathname.split('/').pop();
 
     if (currentPage.includes('index.html') || currentPage === '') {
         const { default: IndexView } = await import('./views/indexView.js');
-        const { default: IndexController } = await import('./controllers/indexController.js');
         const view = new IndexView();
-        new IndexController(model, view);
+        try {
+            const { default: IndexController } = await import('./controllers/indexController.js');
+            new IndexController(model, view);
+        } catch (error) {
+            console.error('Erro ao importar IndexController:', error);
+        }
     } else if (currentPage.includes('editor.html')) {
         const { default: EditorView } = await import('./views/editorView.js');
         const { default: EditorController } = await import('./controllers/editorController.js');
         const view = new EditorView();
+        await new Promise(resolve => setTimeout(resolve, 100));
         new EditorController(model, view);
     }
 
     console.log('Aplicativo inicializado com sucesso!');
-})();
+});

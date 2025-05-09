@@ -1,46 +1,80 @@
 class NewsModel {
     constructor() {
-        this.news = JSON.parse(localStorage.getItem('news')) || [];
+        this.dbName = 'NewsDB';
+        this.storeName = 'news';
+        this.db = null;
+        this.initDB();
     }
 
-    // Salva uma nova notícia
-    saveNews(newsItem) {
-        this.news.push(newsItem);
-        this._updateStorage();
+    async initDB() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(this.dbName, 1);
+
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains(this.storeName)) {
+                    db.createObjectStore(this.storeName, { keyPath: 'id', autoIncrement: true });
+                }
+            };
+
+            request.onsuccess = (event) => {
+                this.db = event.target.result;
+                resolve();
+            };
+
+            request.onerror = (event) => {
+                console.error('Erro ao abrir IndexedDB:', event.target.error);
+                reject(event.target.error);
+            };
+        });
     }
 
-    // Obtém todas as notícias
-    getNews() {
-        return this.news;
+    async getNews() {
+        if (!this.db) await this.initDB();
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction([this.storeName], 'readonly');
+            const store = transaction.objectStore(this.storeName);
+            const request = store.getAll();
+
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = (event) => reject(event.target.error);
+        });
     }
 
-    // Obtém notícias filtradas por data
-    getNewsByDate(date) {
-        if (!date) return this.news;
-        return this.news.filter(item => new Date(item.date).toDateString() === new Date(date).toDateString());
+    async addNews(newsItem) {
+        if (!this.db) await this.initDB();
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction([this.storeName], 'readwrite');
+            const store = transaction.objectStore(this.storeName);
+            const request = store.add(newsItem);
+
+            request.onsuccess = () => resolve();
+            request.onerror = (event) => reject(event.target.error);
+        });
     }
 
-    // Atualiza uma notícia existente
-    updateNews(index, updatedNews) {
-        this.news[index] = updatedNews;
-        this._updateStorage();
+    async updateNews(index, updatedNews) {
+        if (!this.db) await this.initDB();
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction([this.storeName], 'readwrite');
+            const store = transaction.objectStore(this.storeName);
+            const request = store.put(updatedNews, index);
+
+            request.onsuccess = () => resolve();
+            request.onerror = (event) => reject(event.target.error);
+        });
     }
 
-    // Deleta uma notícia
-    deleteNews(index) {
-        this.news.splice(index, 1);
-        this._updateStorage();
-    }
+    async deleteNews(index) {
+        if (!this.db) await this.initDB();
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction([this.storeName], 'readwrite');
+            const store = transaction.objectStore(this.storeName);
+            const request = store.delete(index);
 
-    // Incrementa visualizações de uma notícia
-    incrementViews(index) {
-        this.news[index].views = (this.news[index].views || 0) + 1;
-        this._updateStorage();
-    }
-
-    // Atualiza o localStorage
-    _updateStorage() {
-        localStorage.setItem('news', JSON.stringify(this.news));
+            request.onsuccess = () => resolve();
+            request.onerror = (event) => reject(event.target.error);
+        });
     }
 }
 
