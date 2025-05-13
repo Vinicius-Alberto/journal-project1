@@ -1,74 +1,54 @@
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import {getFirestore,collection,addDoc,getDocs,deleteDoc,doc,updateDoc,getDoc} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+import { firebaseConfig } from '../firebaseConfig.js';
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 export default class EditorController {
-    constructor() {
-        this.dbName = 'NewsDB';
-        this.storeName = 'news';
-        this.db = null;
+  constructor() {
+    this.collectionRef = collection(db, 'news');
+  }
+
+  async saveNews(news) {
+    const base64Length = news.image ? news.image.length * 0.75 : 0;
+    if (base64Length > 1024 * 1024) {
+      throw new Error("Imagem muito grande. O tamanho máximo permitido é 1MB.");
     }
 
-    async initDB() {
-        return new Promise((resolve, reject) => {
-            const request = indexedDB.open(this.dbName, 1);
-            request.onerror = () => reject('Erro ao abrir o banco de dados');
-            request.onsuccess = () => {
-                this.db = request.result;
-                resolve();
-            };
-            request.onupgradeneeded = (event) => {
-                const db = event.target.result;
-                db.createObjectStore(this.storeName, { autoIncrement: true });
-            };
-        });
-    }
+    await addDoc(this.collectionRef, {
+      title: news.title,
+      content: news.content,
+      date: news.date || new Date().toISOString(),
+      image: news.image || ''
+    });
+  }
 
-    async saveNews(news) {
-        await this.initDB();
-        return new Promise((resolve, reject) => {
-            const transaction = this.db.transaction([this.storeName], 'readwrite');
-            const store = transaction.objectStore(this.storeName);
-            const request = store.add(news);
-            request.onsuccess = () => resolve();
-            request.onerror = () => reject('Erro ao salvar notícia');
-        });
-    }
+  async loadNews() {
+    const snapshot = await getDocs(this.collectionRef);
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+  }
 
-    async loadNews() {
-        await this.initDB();
-        return new Promise((resolve, reject) => {
-            const transaction = this.db.transaction([this.storeName], 'readonly');
-            const store = transaction.objectStore(this.storeName);
-            const request = store.getAll();
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => reject('Erro ao carregar notícias');
-        });
-    }
+  async deleteNews(id) {
+    await deleteDoc(doc(db, 'news', id));
+  }
 
-    async editNews(index) {
-        const news = await this.loadNews();
-        if (index >= 0 && index < news.length) {
-            const newsItem = news[index];
-            await this.deleteNews(index);
-            return newsItem;
-        }
-        throw new Error('Notícia não encontrada');
-    }
+  async getNewsById(id) {
+    const docSnap = await getDoc(doc(db, 'news', id));
+    if (!docSnap.exists()) throw new Error('Notícia não encontrada');
+    return { id: docSnap.id, ...docSnap.data() };
+  }
 
-    async deleteNews(index) {
-        await this.initDB();
-        return new Promise((resolve, reject) => {
-            const transaction = this.db.transaction([this.storeName], 'readwrite');
-            const store = transaction.objectStore(this.storeName);
-            const request = store.getAllKeys();
-            request.onsuccess = () => {
-                const keys = request.result;
-                if (index >= 0 && index < keys.length) {
-                    const deleteRequest = store.delete(keys[index]);
-                    deleteRequest.onsuccess = () => resolve();
-                    deleteRequest.onerror = () => reject('Erro ao excluir notícia');
-                } else {
-                    reject('Índice inválido');
-                }
-            };
-            request.onerror = () => reject('Erro ao obter chaves');
-        });
+  async updateNews(id, updatedFields) {
+    const base64Length = updatedFields.image ? updatedFields.image.length * 0.75 : 0;
+    if (base64Length > 1024 * 1024) {
+      throw new Error("Imagem muito grande. O tamanho máximo permitido é 1MB.");
     }
+    await updateDoc(doc(db, 'news', id), updatedFields);
+  }
 }

@@ -1,6 +1,8 @@
 import EditorController from './controllers/editorControllerFirebase.js';
 import EditorView from './views/editorView.js';
 
+let currentEditingId = null;
+
 // Determinar a página atual
 const isEditorPage = window.location.pathname.includes('editor.html');
 
@@ -13,7 +15,7 @@ async function loadEditorNewsList(editorController) {
         newsList.innerHTML = '<p style="color: #1A1A1A;">Nenhuma notícia cadastrada.</p>';
         return;
     }
-    news.forEach((item, index) => {
+    news.forEach((item) => {
         const div = document.createElement('div');
         div.innerHTML = `
             ${item.image ? `<img src="${item.image}" alt="Miniatura" class="mini-thumbnail">` : ''}
@@ -21,23 +23,29 @@ async function loadEditorNewsList(editorController) {
                 <h3>${item.title}</h3>
                 <p>${item.content.slice(0, 100)}${item.content.length > 100 ? '...' : ''}</p>
                 <div class="actions">
-                    <a href="#" data-id="${index}" class="edit-news">Editar</a>
-                    <a href="#" data-id="${index}" class="delete-news">Excluir</a>
+                    <a href="#" data-id="${item.id}" class="edit-news">Editar</a>
+                    <a href="#" data-id="${item.id}" class="delete-news">Excluir</a>
                 </div>
             </div>
         `;
         newsList.appendChild(div);
     });
 
-    // Eventos para Editar e Excluir
+    // Inicializando os eventos para Editar e Excluir
+    initializeEditDeleteEventHandlers(editorController);
+}
+
+// Função para inicializar os manipuladores de eventos de edição e exclusão
+function initializeEditDeleteEventHandlers(editorController) {
+    // Editar notícia
     document.querySelectorAll('.edit-news').forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
-                const id = e.target.dataset.id;
-                editorController.editNews(index).then((newsItem) => {
+            const id = e.target.dataset.id;
+            editorController.getNewsById(id).then((newsItem) => {
                 const editorView = new EditorView();
-                editorView.populateForm(newsItem);  
-                // Exibir a miniatura da imagem ao editar
+                editorView.populateForm(newsItem);
+
                 const previewImage = document.getElementById('previewImage');
                 if (newsItem.image) {
                     previewImage.src = newsItem.image;
@@ -45,16 +53,21 @@ async function loadEditorNewsList(editorController) {
                 } else {
                     previewImage.style.display = 'none';
                 }
+
+                currentEditingId = id; // Para edição real depois
             });
         });
     });
 
+    // Excluir notícia
     document.querySelectorAll('.delete-news').forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const id = e.target.dataset.id;
             if (confirm('Deseja excluir esta notícia?')) {
-                editorController.deleteNews(index).then(() => loadEditorNewsList(editorController));
+                editorController.deleteNews(id).then(() => {
+                    loadEditorNewsList(editorController);
+                });
             }
         });
     });

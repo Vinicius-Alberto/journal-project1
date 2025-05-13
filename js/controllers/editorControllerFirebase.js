@@ -1,7 +1,16 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc,
+  updateDoc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-import { firebaseConfig } from '../firebaseConfig.js';
+import { firebaseConfig } from '../firebaseConfig.js'; // ajuste o caminho se necessário
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -12,6 +21,12 @@ export default class EditorControllerFirebase {
   }
 
   async saveNews(news) {
+    // Verifica se a imagem excede 1MB (limite do Firestore por documento)
+    const base64Length = news.image ? news.image.length * 0.75 : 0;
+    if (base64Length > 1024 * 1024) {
+      throw new Error("Imagem muito grande. O tamanho máximo permitido é 1MB.");
+    }
+
     await addDoc(this.collectionRef, {
       title: news.title,
       content: news.content,
