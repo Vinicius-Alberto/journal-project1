@@ -1,63 +1,60 @@
 class IndexView {
     constructor() {
-        this.newsList = document.getElementById('newsList');
-        this.modal = document.getElementById('newsModal');
-        this.modalTitle = document.getElementById('modalTitle');
-        this.modalDate = document.getElementById('modalDate');
-        this.modalImage = document.getElementById('modalImage');
-        this.modalContent = document.getElementById('modalContent');
-        this.closeModalBtn = document.getElementById('closeModal');
+        this.newsShelf = document.getElementById('newsShelf');
+        this.mainDisplay = document.querySelector('.main-display');
+        this.selectedNewsId = null; // Para rastrear a notícia selecionada
+        this.newsData = []; // Armazenar os dados das notícias
+
+        console.log('Inicializando IndexView - newsShelf:', this.newsShelf);
+        console.log('Inicializando IndexView - mainDisplay:', this.mainDisplay);
     }
 
-    // Renderiza a lista de notícias como miniaturas
-    renderNews(news, onClickHandler) {
-        if (!this.newsList) {
-            console.error('Elemento #newsList não encontrado no DOM');
+    renderNews(news) {
+        if (!this.newsShelf) {
+            console.error('Elemento #newsShelf não encontrado no DOM');
             return;
         }
-        this.newsList.innerHTML = '';
-        news.forEach((item, index) => {
+        this.newsData = news; // Armazena os dados
+        console.log('Renderizando notícias no IndexView:', news);
+        this.newsShelf.innerHTML = '';
+        news.forEach((item) => {
             const newsItem = document.createElement('div');
-            newsItem.classList.add('news-book');
+            newsItem.classList.add('thumbnail-item');
+            newsItem.setAttribute('data-id', item.id);
+            if (item.id === this.selectedNewsId) {
+                newsItem.classList.add('selected'); // Adiciona a classe 'selected' se for a notícia atual
+            }
             newsItem.innerHTML = `
-                <div class="book-cover">
-                    ${item.image ? `<img src="${item.image}" alt="Capa da notícia">` : '<div class="no-image">Sem Imagem</div>'}
-                    <h4>${item.title}</h4>
+                <div class="thumbnail-image-container">
+                    ${item.image ? `<img src="${item.image}" alt="Miniatura da notícia">` : '<div class="no-image">Sem Imagem</div>'}
                 </div>
+                <h5>${item.title}</h5>
             `;
-            newsItem.addEventListener('click', () => onClickHandler(index));
-            this.newsList.appendChild(newsItem);
+            newsItem.addEventListener('click', () => this.onSelectNews(item.id));
+            this.newsShelf.appendChild(newsItem);
         });
     }
 
-    // Exibe o modal com os detalhes da notícia
-    showNewsDetails(news) {
-        if (!this.modal || !this.modalTitle || !this.modalContent) {
-            console.error('Elementos do modal não encontrados no DOM');
+    displaySelectedNews(news) {
+        if (!this.mainDisplay) {
+            console.error('Elemento .main-display não encontrado no DOM');
             return;
         }
-        this.modalTitle.textContent = news.title;
-        this.modalDate.textContent = `Data: ${new Date(news.date).toLocaleDateString('pt-BR')}`;
-        this.modalContent.textContent = news.content;
-        if (news.image) {
-            this.modalImage.src = news.image;
-            this.modalImage.style.display = 'block';
-        } else {
-            this.modalImage.style.display = 'none';
-        }
-        this.modal.style.display = 'block';
+        console.log('Exibindo notícia selecionada:', news);
+        this.selectedNewsId = news.id; // Atualiza o ID da notícia selecionada
+        this.mainDisplay.innerHTML = `
+            <div class="selected-news">
+                ${news.image ? `<img src="${news.image}" alt="Notícia expandida">` : '<div class="no-image">Sem Imagem</div>'}
+                <h3>${news.title || 'Sem Título'}</h3>
+                <p><strong>Data:</strong> ${news.date ? new Date(news.date).toLocaleDateString('pt-BR') : 'Sem Data'}</p>
+                <p>${news.content || 'Sem Conteúdo'}</p>
+            </div>
+        `;
+        this.renderNews(this.newsData); // Re-renderiza usando os dados armazenados
+    }
 
-        // Fecha o modal ao clicar no botão de fechar
-        this.closeModalBtn.onclick = () => {
-            this.modal.style.display = 'none';
-        };
-
-        // Fecha o modal ao clicar fora do conteúdo
-        window.onclick = (event) => {
-            if (event.target === this.modal) {
-                this.modal.style.display = 'none';
-            }
-        };
+    bindSelectNews(handler) {
+        this.onSelectNews = handler;
     }
 }
 

@@ -1,171 +1,169 @@
-/* Estante de notícias */
-.news-shelf {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 1rem;
-    padding: 1rem 0;
+body {
+    background-color: #E6FCF5;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
 }
 
-.news-book {
-    background-color: var(--white);
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    cursor: pointer;
-    overflow: hidden;
+.container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+header {
+    background: #2A7A6A;
+    padding: 15px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    color: #FFFFFF;
+    font-size: 24px;
+    margin: 0;
+}
+
+header nav a {
+    color: #FFBD69;
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+header nav a:hover,
+header nav a.active {
+    color: #FF6F61;
+}
+
+div.main-display {
+    flex: 2;
+    height: 80vh;
+    background: #FFFFFF;
+    border: 1px solid #333333;
+    border-radius: 12px;
+    overflow: auto;
+    padding: 25px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+div.main-display .selected-news {
     text-align: center;
-    height: 220px;
+    background: #C3FAE8;
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid #FF6F61;
+}
+
+div.main-display .selected-news img {
+    max-width: 100%;
+    max-height: 300px;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 2px solid #FF6F61;
+}
+
+div.main-display .selected-news h3 {
+    font-size: 26px;
+    color: #FF6F61;
+    margin: 15px 0;
+    transition: color 0.3s ease;
+}
+
+div.main-display .selected-news h3:hover {
+    color: #FFBD69;
+}
+
+div.main-display .selected-news p {
+    color: #636E72;
+    font-size: 16px;
+    line-height: 1.6;
+    text-align: left;
+    margin: 10px 0;
+}
+
+div.thumbnail-grid {
+    flex: 1;
+    max-width: 300px;
+    gap: 1;
+    height: 80vh;
+    overflow-y: auto;
+    border: 1px solid #333333;
+    border-radius: 12px;
+    padding: 25px;
+    background: #FFFFFF;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+div.thumbnail-grid .thumbnails {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    gap: 15px;
 }
 
-.news-book:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+div.thumbnail-grid .thumbnails .thumbnail-item {
+    background: #F9FBFD;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid transparent;
 }
 
-.book-cover {
-    padding: 0.5rem;
+div.thumbnail-grid .thumbnails .thumbnail-item.selected {
+    border: 2px solid #FF6F61;
+    background: #C3FAE8;
 }
 
-.book-cover img {
-    max-width: 100%;
-    max-height: 120px;
+div.thumbnail-grid .thumbnails .thumbnail-item:hover {
+    transform: scale(1.02);
+    border: 2px solid #FFBD69;
+    box-shadow: 0 6px 12px rgba(255, 189, 105, 0.3);
+}
+
+div.thumbnail-grid .thumbnails .thumbnail-item .thumbnail-image-container {
+    width: 100%;
+    height: 100px;
+    overflow: hidden;
+}
+
+div.thumbnail-grid .thumbnails .thumbnail-item .thumbnail-image-container img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    border-radius: 4px;
-    display: block; /* Garante que a imagem seja visível */
+    transition: transform 0.3s ease;
 }
 
-.book-cover .no-image {
-    background-color: var(--gray);
-    color: var(--white);
-    padding: 1rem;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    height: 120px;
+div.thumbnail-grid .thumbnails .thumbnail-item .thumbnail-image-container img:hover {
+    transform: scale(1.05);
+}
+
+div.thumbnail-grid .thumbnails .thumbnail-item .thumbnail-image-container .no-image {
+    width: 100%;
+    height: 100%;
+    background: #E6EAEF;
     display: flex;
     align-items: center;
     justify-content: center;
+    color: #888888;
+    font-size: 12px;
 }
 
-.news-book h4 {
-    font-size: 0.9rem;
-    color: var(--text-color);
-    margin: 0.5rem 0;
-    padding: 0 0.5rem;
-    flex-grow: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* Fallback para navegadores mais antigos */
-    line-clamp: 2; /* Propriedade padrão para navegadores modernos */
-    -webkit-box-orient: vertical;
-}
-
-/* Modal */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    overflow: auto;
-}
-
-.modal-content {
-    background-color: var(--white);
-    margin: 5% auto;
-    padding: 2rem;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
-    width: 90%;
-    max-width: 600px;
-    position: relative;
-}
-
-.close {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    color: var(--gray);
-    font-size: 1.5rem;
-    cursor: pointer;
-}
-
-.close:hover {
-    color: var(--text-color);
-}
-
-#modalTitle {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-}
-
-#modalDate {
-    color: var(--gray);
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-}
-
-#modalImage {
-    max-width: 100%;
-    max-height: 300px;
-    object-fit: contain;
-    border-radius: var(--border-radius);
-    margin-bottom: 1rem;
-    display: block; /* Garante que a imagem seja visível */
-}
-
-#modalContent {
-    font-size: 1rem;
-    line-height: 1.5;
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-    .news-shelf {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    }
-
-    .news-book {
-        height: 200px;
-    }
-
-    .book-cover img {
-        max-height: 100px;
-    }
-
-    .book-cover .no-image {
-        height: 100px;
-    }
-
-    .news-book h4 {
-        font-size: 0.8rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .news-shelf {
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    }
-
-    .news-book {
-        height: 180px;
-    }
-
-    .book-cover img {
-        max-height: 80px;
-    }
-
-    .book-cover .no-image {
-        height: 80px;
-    }
-
-    .news-book h4 {
-        font-size: 0.7rem;
-    }
+div.thumbnail-grid .thumbnails .thumbnail-item h5 {
+    margin: 10px;
+    font-size: 14px;
+    color: #2D3436;
+    text-align: center;
+    line-height: 1.4;
 }

@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arquivo de Notícias</title>
-    <link rel="stylesheet" href="css/common.css">
+    <title>O Diário</title>
     <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
@@ -18,18 +17,11 @@
         </div>
     </header>
     <div class="container">
-        <h2>Notícias</h2>
-        <div id="newsList" class="news-shelf"></div>
-    </div>
-    <div id="newsModal" class="modal">
-        <div class="modal-content">
-            <span id="closeModal" class="close">&times;</span>
-            <h3 id="modalTitle"></h3>
-            <p id="modalDate"></p>
-            <img id="modalImage" src="" alt="Imagem da notícia" style="display: none; max-width: 100%;">
-            <p id="modalContent"></p>
+        <div class="thumbnail-grid">
+            <div class="thumbnails" id="thumbnails"></div>
         </div>
+        <div class="main-display" id="mainDisplay"></div>
     </div>
-    <script src="js/app.js"></script>
+    <script type="module" src="js/app.js"></script>
 </body>
 </html>
