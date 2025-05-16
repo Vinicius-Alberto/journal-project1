@@ -1,45 +1,263 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editor - O Diário</title>
-    <link rel="stylesheet" href="css/editor.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editor - O Diário</title>
+  <link rel="stylesheet" href="css/editor.css" />
+  <style>
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1>O Diário</h1>
-            <nav>
-                <a href="index.html">Notícias</a>
-                <a href="editor.html" class="active">Editor</a>
-            </nav>
-        </div>
-    </header>
+  <header>
     <div class="container">
-        <div class="editor-section">
-            <h2>Adicionar Notícia</h2>
-            <form id="newsForm">
-                <label for="title">Título:</label>
-                <input type="text" id="title" name="title" required>
-                <label for="image">Imagem:</label>
-                <input type="file" id="image" name="image" accept="image/*">
-                <div class="image-preview" id="imagePreview">
-                    <img id="previewImage" src="" alt="Prévia da Imagem" style="display: none;">
-                </div>
-                <label for="content">Conteúdo:</label>
-                <textarea id="content" name="content" rows="5" required></textarea>
-                <div class="form-actions">
-                    <button type="submit">Salvar Notícia</button>
-                    <button type="button" id="clearForm">Limpar</button>
-                </div>
-            </form>
-        </div>
-        <div class="news-list-section">
-            <h2>Notícias Existentes</h2>
-            <div class="news-list" id="newsList"></div>
-        </div>
+      <h1>O Diário</h1>
+      <nav>
+        <a href="index.html">Notícias</a>
+        <a href="editor.html" class="active">Editor</a>
+      </nav>
     </div>
-    <script type="module" src="js/app.js"></script>
+  </header>
+
+  <div class="container">
+    <div class="editor-section">
+      <h2>Adicionar Notícia</h2>
+      <form id="newsForm">
+        <label for="title">Título:</label>
+        <input type="text" id="title" name="title" required />
+
+        <label for="image">Imagem:</label>
+        <input type="file" id="image" name="image" accept="image/*" />
+        <div class="image-preview" id="imagePreview">
+          <img id="previewImage" src="" alt="Prévia da Imagem" style="display: none;" />
+        </div>
+
+        <label for="content">Conteúdo:</label>
+        <textarea id="content" name="content" rows="5" required></textarea>
+
+        <div class="form-actions">
+          <button type="submit">Salvar Notícia</button>
+          <button type="button" id="clearForm">Limpar</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="news-list-section">
+      <h2>Notícias Existentes</h2>
+      <div class="news-list" id="newsList"></div>
+    </div>
+  </div>
+
+  <!-- Modal de Edição -->
+  <div id="editModal" class="modal-overlay">
+    <div class="modal-content">
+      <button class="modal-close" id="closeModal">&times;</button>
+      <h2>Editar Notícia</h2>
+
+      <label for="editTitle">Título:</label>
+      <input type="text" id="editTitle" />
+
+      <label for="editContent">Conteúdo:</label>
+      <textarea id="editContent" rows="5"></textarea>
+
+      <label>Imagem Atual:</label>
+      <img id="currentEditImage" src="" style="max-width: 100%; margin-bottom: 10px;" />
+
+      <label for="editImage">Alterar Imagem (opcional):</label>
+      <input type="file" id="editImage" accept="image/*" />
+
+      <div class="form-actions">
+        <button id="saveEditBtn">Salvar Alterações</button>
+        <button id="cancelEditBtn" class="cancel">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import EditorController from './js/controllers/editorControllerFirebase.js';
+    import EditorView from './js/views/editorView.js';
+
+    const editorController = new EditorController();
+    const editorView = new EditorView();
+    let currentEditingId = null;
+
+    async function renderNewsList() {
+      const container = document.getElementById('newsList');
+      container.innerHTML = '';
+      const news = await editorController.loadNews();
+
+      news.forEach(item => {
+        const id = item.id;
+        const wrapper = document.createElement('div');
+        wrapper.className = 'news-list-item';
+
+        const img = document.createElement('img');
+        img.src = item.image || '';
+        img.className = 'mini-thumbnail';
+        img.alt = 'Miniatura';
+
+        const content = document.createElement('div');
+        content.className = 'news-content';
+
+        const title = document.createElement('h3');
+        title.textContent = item.title;
+
+        const snippet = document.createElement('p');
+        snippet.textContent = item.content;
+
+        content.appendChild(title);
+        content.appendChild(snippet);
+
+        const actions = document.createElement('div');
+        actions.className = 'actions';
+
+        const editBtn = document.createElement('a');
+        editBtn.textContent = 'Editar';
+        editBtn.href = '#';
+        editBtn.className = 'edit-news';
+        editBtn.style.marginRight = '8px';
+        editBtn.onclick = (e) => {
+          e.preventDefault();
+          currentEditingId = id;
+          editorController.getNewsById(id).then(newsItem => {
+            editorView.fillEditModal(newsItem);
+            document.getElementById('editModal').classList.add('active');
+          });
+        };
+
+        const deleteBtn = document.createElement('a');
+        deleteBtn.textContent = 'Excluir';
+        deleteBtn.href = '#';
+        deleteBtn.className = 'delete-news';
+        deleteBtn.onclick = (e) => {
+          e.preventDefault();
+          if (confirm('Deseja excluir esta notícia?')) {
+            editorController.deleteNews(id).then(renderNewsList);
+          }
+        };
+
+        actions.appendChild(editBtn);
+        actions.appendChild(deleteBtn);
+
+        wrapper.appendChild(img);
+        wrapper.appendChild(content);
+        wrapper.appendChild(actions);
+
+        container.appendChild(wrapper);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderNewsList();
+
+      document.getElementById('image').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        const previewImage = document.getElementById('previewImage');
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            previewImage.src = event.target.result;
+            previewImage.style.display = 'block';
+          };
+          reader.readAsDataURL(file);
+        } else {
+          previewImage.style.display = 'none';
+        }
+      });
+
+      document.getElementById('newsForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const file = document.getElementById('image').files[0];
+        const title = document.getElementById('title').value;
+        const content = document.getElementById('content').value;
+        let imageBase64 = '';
+        if (file) {
+          imageBase64 = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.readAsDataURL(file);
+          });
+        }
+        await editorController.saveNews({ title, content, image: imageBase64 });
+        document.getElementById('newsForm').reset();
+        document.getElementById('previewImage').style.display = 'none';
+        renderNewsList();
+      });
+
+      document.getElementById('clearForm').addEventListener('click', () => {
+        document.getElementById('newsForm').reset();
+        document.getElementById('previewImage').style.display = 'none';
+      });
+    });
+
+    document.getElementById('cancelEditBtn').onclick = () => {
+      document.getElementById('editModal').classList.remove('active');
+      currentEditingId = null;
+    };
+
+    document.getElementById('closeModal').onclick = () => {
+      document.getElementById('editModal').classList.remove('active');
+      currentEditingId = null;
+    };
+
+    document.getElementById('saveEditBtn').onclick = async () => {
+      const title = document.getElementById('editTitle').value;
+      const content = document.getElementById('editContent').value;
+      const file = document.getElementById('editImage').files[0];
+      let image = null;
+
+      if (file) {
+        image = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(file);
+        });
+      }
+
+      const updatedFields = { title, content };
+      if (image) updatedFields.image = image;
+
+      await editorController.updateNews(currentEditingId, updatedFields);
+      document.getElementById('editModal').classList.remove('active');
+      currentEditingId = null;
+      renderNewsList();
+    };
+  </script>
 </body>
 </html>

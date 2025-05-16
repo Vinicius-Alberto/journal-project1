@@ -23,5 +23,16 @@
         <div class="main-display" id="mainDisplay"></div>
     </div>
     <script type="module" src="js/app.js"></script>
+    <button id="backToTop">Voltar ao topo</button>
+    <script>
+    const backToTop = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+        backToTop.style.display = window.scrollY > 200 ? 'block' : 'none';
+    }
+);
+    backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    </script>
 </body>
 </html>
